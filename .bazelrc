@@ -1,0 +1,43 @@
+# Bazel configuration for PolySolve
+common --enable_workspace
+
+# C++ standards
+build --cxxopt=-std=c++17
+build --host_cxxopt=-std=c++17
+
+# Build configurations
+build:opt --compilation_mode=opt
+build:opt --copt=-O3
+build:opt --copt=-DNDEBUG
+build:opt --strip=always
+
+build:dbg --compilation_mode=dbg
+build:dbg --copt=-g
+build:dbg --strip=never
+
+# Platform specific settings
+build:linux --copt=-fPIC
+build:linux --linkopt=-lpthread
+
+build:macos --copt=-fPIC
+
+# Sanitizer configurations
+build:asan --config=dbg
+build:asan --copt=-fsanitize=address
+build:asan --linkopt=-fsanitize=address
+
+build:tsan --config=dbg
+build:tsan --copt=-fsanitize=thread
+build:tsan --linkopt=-fsanitize=thread
+
+build:ubsan --config=dbg
+build:ubsan --copt=-fsanitize=undefined
+build:ubsan --linkopt=-fsanitize=undefined
+
+# Test configurations
+test --test_output=errors
+test --test_timeout=300,1200,3600,-1
+
+# Coverage
+coverage --combined_report=lcov
+coverage --coverage_report_generator=@bazel_tools//tools/test:coverage_report_generator

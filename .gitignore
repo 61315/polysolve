@@ -10,6 +10,5 @@ PolySolveOptions.cmake
 
 # Bazel artifacts
 bazel-*
-.bazel*
 .bazelrc.local
 bazelisk

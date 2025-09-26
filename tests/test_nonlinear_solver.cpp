@@ -16,6 +16,20 @@
 using namespace polysolve;
 using namespace polysolve::nonlinear;
 
+// Centralized logger function to avoid duplicate logger issues
+std::shared_ptr<spdlog::logger> get_test_logger() {
+    static std::shared_ptr<spdlog::logger> logger = nullptr;
+    if (!logger) {
+        // Try to get existing logger first
+        logger = spdlog::get("test_logger");
+        if (!logger) {
+            logger = spdlog::stdout_color_mt("test_logger");
+        }
+        logger->set_level(spdlog::level::info);
+    }
+    return logger;
+}
+
 DECLARE_DIFFSCALAR_BASE();
 
 static const int N_RANDOM = 5;
@@ -271,8 +285,7 @@ void test_solvers(const std::vector<std::string> &solvers, const int iters, cons
 
     const double characteristic_length = 1;
 
-    static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("test_logger");
-    logger->set_level(spdlog::level::info);
+    auto logger = get_test_logger();
     TestProblem::TVector g;
     for (auto &prob : problems)
     {
@@ -370,7 +383,7 @@ void test_solvers_gradient_fd(const bool full_fd)
 
     const double characteristic_length = 1;
 
-    static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("test_logger");
+    auto logger = get_test_logger();
     logger->set_level(spdlog::level::info);
     TestProblem::TVector g;
     linear_solver_params["solver"] = "Eigen::LDLT";
@@ -448,7 +461,7 @@ TEST_CASE("nonlinear-fallbacks", "[solver]")
 
     const double characteristic_length = 1;
 
-    static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("test_logger");
+    auto logger = get_test_logger();
     logger->set_level(spdlog::level::info);
     TestProblem::TVector g;
     auto prob = std::make_unique<QuadraticProblem>();
@@ -511,7 +524,7 @@ TEST_CASE("nonlinear-box-constraint", "[solver]")
 
     const double characteristic_length = 1;
 
-    static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("test_logger");
+    auto logger = get_test_logger();
     logger->set_level(spdlog::level::info);
 
     for (auto &prob : problems)
@@ -648,7 +661,7 @@ TEST_CASE("MMA", "[solver]")
 
     const double characteristic_length = 1;
 
-    static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("test_logger");
+    auto logger = get_test_logger();
     logger->set_level(spdlog::level::info);
 
     for (auto &prob : problems)
