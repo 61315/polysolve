@@ -53,10 +53,13 @@ TEST_CASE("jse", "[solver]")
 {
     const std::string path = POLYFEM_DATA_DIR;
     Eigen::SparseMatrix<double> A;
-    const bool ok = loadMarket(A, path + "/A_2.mat");
+    const bool ok = Eigen::loadMarket(A, path + "/A_2.mat");
     REQUIRE(ok);
 
-    static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("test_logger");
+    auto logger = spdlog::get("test_logger");
+    if (!logger) {
+        logger = spdlog::stdout_color_mt("test_logger");
+    }
     logger->set_level(spdlog::level::warn);
 
     json input = {};
@@ -78,10 +81,13 @@ TEST_CASE("multi-solver", "[solver]")
 {
     const std::string path = POLYFEM_DATA_DIR;
     Eigen::SparseMatrix<double> A;
-    const bool ok = loadMarket(A, path + "/A_2.mat");
+    const bool ok = Eigen::loadMarket(A, path + "/A_2.mat");
     REQUIRE(ok);
 
-    static std::shared_ptr<spdlog::logger> logger = spdlog::stdout_color_mt("test_logger");
+    auto logger = spdlog::get("test_logger");
+    if (!logger) {
+        logger = spdlog::stdout_color_mt("test_logger");
+    }
     logger->set_level(spdlog::level::warn);
 
     json input = {};
@@ -423,7 +429,7 @@ TEST_CASE("saddle_point_test", "[solver]")
     REQUIRE(ok);
 
     Eigen::VectorXd b;
-    ok = loadMarketVector(b, path + "/b0.mat");
+    ok = Eigen::loadMarketVector(b, path + "/b0.mat");
     REQUIRE(ok);
 
     auto solver = Solver::create("SaddlePointSolver", "");

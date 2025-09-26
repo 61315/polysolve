@@ -16,7 +16,7 @@ cc_test(
         "@polyfem_data//:test_data",
     ],
     defines = [
-        "POLYFEM_DATA_DIR=\\\"polyfem_data\\\"",
+        "POLYFEM_DATA_DIR=\\\"../polyfem_data\\\"",
     ],
     copts = [
         "-std=c++17",
@@ -39,7 +39,7 @@ cc_test(
         "@polyfem_data//:test_data",
     ],
     defines = [
-        "POLYFEM_DATA_DIR=\\\"polyfem_data\\\"",
+        "POLYFEM_DATA_DIR=\\\"../polyfem_data\\\"",
     ],
     copts = [
         "-std=c++17",
@@ -70,4 +70,14 @@ cc_test(
         "@catch2//:catch2_main",
     ],
     size = "small",
+)
+
+# Debug binary to find data path issues
+cc_binary(
+    name = "debug_data_path",
+    srcs = ["debug_data_path.cpp"],
+    data = ["@polyfem_data//:test_data"],
+    defines = ["POLYFEM_DATA_DIR=\\\"../polyfem_data\\\""],
+    deps = ["//:polysolve_linear"],
+    copts = ["-std=c++17"],
 )
