@@ -1,9 +1,13 @@
 cc_library(
     name = "jse",
+    srcs = [
+        "src/jse/jse.cpp",
+    ],
     hdrs = glob([
-        "include/**/*.hpp",
+        "src/**/*.h",
+        "src/**/*.hpp",
     ]),
-    includes = ["include"],
+    includes = ["src"],
     deps = [
         "@nlohmann_json//:nlohmann_json",
         "@spdlog//:spdlog",

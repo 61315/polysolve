@@ -14,7 +14,7 @@ cc_library(
         "src/polysolve/linear/*.cpp",
     ], exclude = [
         "src/polysolve/linear/CuSolverDN.cu",    # CUDA files handled separately
-        "src/polysolve/linear/Solver.cpp",       # Requires JSE - temporarily excluded
+        # JSE-dependent files now included with correct repository
         "src/polysolve/linear/HypreSolver.cpp",  # Requires HYPRE system library
         "src/polysolve/linear/Mumps.cpp",        # Requires MUMPS and MPI system libraries
         "src/polysolve/linear/Pardiso.cpp",      # Requires PARDISO system library
@@ -27,12 +27,13 @@ cc_library(
         "src/polysolve/linear/CuSolverDN.cuh",   # CUDA files handled separately
     ]),
     includes = ["src"],
+    copts = ["-std=c++17"],  # Force C++17
     deps = [
         "@eigen//:eigen",
         "@nlohmann_json//:nlohmann_json",
         "@spdlog//:spdlog",
         "@finite_diff//:finite_diff",
-        # "@jse//:jse",  # Temporarily disabled due to auth issues
+        "@jse//:jse",  # Now using the correct public repository
     ],
     defines = [
         'POLYSOLVE_LINEAR_SPEC="\\"$(location linear-solver-spec.json)\\""',
@@ -53,8 +54,8 @@ cc_library(
         "src/polysolve/nonlinear/descent_strategies/box_constraints/*.cpp",
         "src/polysolve/nonlinear/line_search/*.cpp",
     ], exclude = [
-        "src/polysolve/nonlinear/Solver.cpp",           # Requires JSE
-        "src/polysolve/nonlinear/BoxConstraintSolver.cpp", # Requires JSE
+        # JSE-dependent files now included with correct repository
+        # Only system-dependent files excluded
     ]),
     hdrs = glob([
         "src/polysolve/nonlinear/*.hpp",
@@ -63,10 +64,12 @@ cc_library(
         "src/polysolve/nonlinear/line_search/*.hpp",
     ]),
     includes = ["src"],
+    copts = ["-std=c++17"],  # Force C++17
     deps = [
         ":polysolve_linear",
         "@lbfgspp//:lbfgspp",
         "@finite_diff//:finite_diff",
+        "@jse//:jse",  # Also needed for nonlinear solver
     ],
     defines = [
         'POLYSOLVE_NON_LINEAR_SPEC="\\"$(location nonlinear-solver-spec.json)\\""',

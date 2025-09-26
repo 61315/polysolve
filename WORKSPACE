@@ -78,7 +78,7 @@ git_repository(
 git_repository(
     name = "lbfgspp",
     build_file = "//:third_party/lbfgspp.BUILD",
-    commit = "v0.2.0",
+    tag = "v0.4.0",
     remote = "https://github.com/yixuan/LBFGSpp.git",
 )
 
@@ -113,8 +113,8 @@ http_archive(
 git_repository(
     name = "jse",
     build_file = "//:third_party/jse.BUILD",
-    commit = "main",  # Update to specific tag when available
-    remote = "https://github.com/polyfem/json-spec-engine.git",
+    commit = "11d028ebf54c3665e1a7c25d8ac622a8cb851223",
+    remote = "https://github.com/geometryprocessing/json-spec-engine.git",
 )
 
 # Intel TBB (Threading Building Blocks)
