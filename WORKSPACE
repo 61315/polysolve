@@ -70,7 +70,7 @@ http_archive(
 git_repository(
     name = "finite_diff",
     build_file = "//:third_party/finite_diff.BUILD",
-    commit = "v1.0.2",
+    tag = "v1.0.2",
     remote = "https://github.com/zfergus/finite-diff.git",
 )
 
