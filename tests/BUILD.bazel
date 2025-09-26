@@ -1,0 +1,72 @@
+load("@rules_cc//cc:defs.bzl", "cc_test")
+
+# Unit tests for polysolve
+cc_test(
+    name = "unit_tests",
+    srcs = [
+        "main.cpp",
+        "test_linear_solver.cpp",
+        "test_nonlinear_solver.cpp",
+        "test_json.cpp",
+        "autodiff.h",
+    ],
+    deps = [
+        "//:polysolve",
+        "@catch2//:catch2",
+    ],
+    data = [
+        "//:linear-solver-spec.json",
+        "//:nonlinear-solver-spec.json",
+    ],
+    # Enable test discovery
+    size = "medium",
+    timeout = "moderate",
+)
+
+# Individual test targets for better granularity
+cc_test(
+    name = "linear_solver_test",
+    srcs = [
+        "main.cpp",
+        "test_linear_solver.cpp",
+        "autodiff.h",
+    ],
+    deps = [
+        "//:polysolve_linear",
+        "@catch2//:catch2",
+    ],
+    data = [
+        "//:linear-solver-spec.json",
+    ],
+    size = "small",
+)
+
+cc_test(
+    name = "nonlinear_solver_test",
+    srcs = [
+        "main.cpp",
+        "test_nonlinear_solver.cpp",
+        "autodiff.h",
+    ],
+    deps = [
+        "//:polysolve",
+        "@catch2//:catch2",
+    ],
+    data = [
+        "//:nonlinear-solver-spec.json",
+    ],
+    size = "small",
+)
+
+cc_test(
+    name = "json_test",
+    srcs = [
+        "main.cpp",
+        "test_json.cpp",
+    ],
+    deps = [
+        "//:polysolve_linear",
+        "@catch2//:catch2",
+    ],
+    size = "small",
+)

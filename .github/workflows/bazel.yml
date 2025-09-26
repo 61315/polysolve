@@ -1,0 +1,157 @@
+name: Bazel Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  BAZEL_VERSION: "6.4.0"
+
+jobs:
+  ####################
+  # Linux / macOS
+  ####################
+  
+  bazel-build:
+    name: Bazel Build (${{ matrix.os }}, ${{ matrix.config }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        config: [opt, dbg]
+        include:
+          - os: ubuntu-latest
+            cache-name: linux
+          - os: macos-latest
+            cache-name: macos
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.6
+        with:
+          fetch-depth: 10
+
+      - name: Setup Bazel
+        uses: bazelbuild/setup-bazelisk@v2
+
+      - name: Mount bazel cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/bazel
+            ~/.cache/bazelisk
+          key: bazel-cache-${{ matrix.cache-name }}-${{ matrix.config }}-${{ hashFiles('WORKSPACE', '.bazelrc', '**/*.BUILD', '**/BUILD.bazel') }}
+          restore-keys: |
+            bazel-cache-${{ matrix.cache-name }}-${{ matrix.config }}-
+            bazel-cache-${{ matrix.cache-name }}-
+
+      - name: Dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            libblas-dev \
+            liblapack-dev \
+            libsuitesparse-dev
+
+      - name: Dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install openblas lapack suite-sparse
+
+      - name: Build polysolve_linear
+        run: |
+          bazel build --config=${{ matrix.config }} --config=ci //:polysolve_linear
+
+      - name: Build polysolve
+        run: |
+          bazel build --config=${{ matrix.config }} --config=ci //:polysolve
+
+      - name: Build with optional dependencies
+        run: |
+          bazel build --config=${{ matrix.config }} --config=ci //:polysolve_full
+
+      - name: Run unit tests
+        run: |
+          bazel test --config=${{ matrix.config }} --config=ci //tests:unit_tests
+
+      - name: Run individual tests
+        run: |
+          bazel test --config=${{ matrix.config }} --config=ci //tests:linear_solver_test
+          bazel test --config=${{ matrix.config }} --config=ci //tests:nonlinear_solver_test
+          bazel test --config=${{ matrix.config }} --config=ci //tests:json_test
+
+  ####################
+  # Sanitizers
+  ####################
+
+  sanitizers:
+    name: Sanitizers (${{ matrix.sanitizer }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sanitizer: [asan, ubsan]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.6
+
+      - name: Setup Bazel
+        uses: bazelbuild/setup-bazelisk@v2
+
+      - name: Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            libblas-dev \
+            liblapack-dev \
+            libsuitesparse-dev
+
+      - name: Build with ${{ matrix.sanitizer }}
+        run: |
+          bazel build --config=${{ matrix.sanitizer }} --config=ci //:polysolve
+
+      - name: Test with ${{ matrix.sanitizer }}
+        run: |
+          bazel test --config=${{ matrix.sanitizer }} --config=ci //tests:unit_tests
+
+  ####################
+  # Code Coverage
+  ####################
+
+  coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.6
+
+      - name: Setup Bazel
+        uses: bazelbuild/setup-bazelisk@v2
+
+      - name: Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            libblas-dev \
+            liblapack-dev \
+            libsuitesparse-dev \
+            lcov
+
+      - name: Run tests with coverage
+        run: |
+          bazel coverage --config=dbg --config=ci //tests:unit_tests
+
+      - name: Generate coverage report
+        run: |
+          genhtml bazel-out/_coverage/_coverage_report.dat -o coverage_html
+          
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: bazel-out/_coverage/_coverage_report.dat
+          fail_ci_if_error: true

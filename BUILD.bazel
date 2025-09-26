@@ -1,0 +1,110 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+# PolySolve Linear library
+cc_library(
+    name = "polysolve_linear",
+    srcs = glob([
+        "src/polysolve/*.cpp",
+        "src/polysolve/linear/*.cpp",
+    ], exclude = [
+        "src/polysolve/linear/CuSolverDN.cu",  # CUDA files handled separately
+    ]),
+    hdrs = glob([
+        "src/polysolve/*.hpp",
+        "src/polysolve/linear/*.hpp",
+        "src/polysolve/linear/*.tpp",
+    ], exclude = [
+        "src/polysolve/linear/CuSolverDN.cuh",  # CUDA files handled separately
+    ]),
+    includes = ["src"],
+    deps = [
+        "@eigen//:eigen",
+        "@nlohmann_json//:nlohmann_json",
+        "@spdlog//:spdlog",
+        "@jse//:jse",
+    ],
+    defines = [
+        'POLYSOLVE_LINEAR_SPEC="\\"$(location linear-solver-spec.json)\\""',
+        'POLYSOLVE_JSON_SPEC_DIR="\\".\\\""',
+    ],
+    data = [
+        "linear-solver-spec.json",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# PolySolve Nonlinear library
+cc_library(
+    name = "polysolve",
+    srcs = glob([
+        "src/polysolve/nonlinear/*.cpp",
+        "src/polysolve/nonlinear/descent_strategies/*.cpp",
+        "src/polysolve/nonlinear/descent_strategies/box_constraints/*.cpp",
+        "src/polysolve/nonlinear/line_search/*.cpp",
+    ]),
+    hdrs = glob([
+        "src/polysolve/nonlinear/*.hpp",
+        "src/polysolve/nonlinear/descent_strategies/*.hpp",
+        "src/polysolve/nonlinear/descent_strategies/box_constraints/*.hpp",
+        "src/polysolve/nonlinear/line_search/*.hpp",
+    ]),
+    includes = ["src"],
+    deps = [
+        ":polysolve_linear",
+        "@lbfgspp//:lbfgspp", 
+        "@finite_diff//:finite_diff",
+    ],
+    defines = [
+        'POLYSOLVE_NON_LINEAR_SPEC="\\"$(location nonlinear-solver-spec.json)\\""',
+    ],
+    data = [
+        "nonlinear-solver-spec.json",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# Optional dependencies (configurable through defines)
+
+# AMGCL support
+cc_library(
+    name = "polysolve_linear_with_amgcl",
+    deps = [
+        ":polysolve_linear",
+        "@amgcl//:amgcl",
+    ],
+    defines = ["POLYSOLVE_WITH_AMGCL"],
+    visibility = ["//visibility:public"],
+)
+
+# Spectra support
+cc_library(
+    name = "polysolve_linear_with_spectra",
+    deps = [
+        ":polysolve_linear",
+        "@spectra//:spectra",
+    ],
+    defines = ["POLYSOLVE_WITH_SPECTRA"],
+    visibility = ["//visibility:public"],
+)
+
+# TBB support
+cc_library(
+    name = "polysolve_linear_with_tbb",
+    deps = [
+        ":polysolve_linear",
+        "@onetbb//:onetbb",
+    ],
+    defines = ["POLYSOLVE_WITH_TBB"],
+    visibility = ["//visibility:public"],
+)
+
+# Combined library with common optional features
+cc_library(
+    name = "polysolve_full",
+    deps = [
+        ":polysolve",
+        ":polysolve_linear_with_amgcl",
+        ":polysolve_linear_with_spectra",
+    ],
+    visibility = ["//visibility:public"],
+)
