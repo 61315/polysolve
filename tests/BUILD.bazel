@@ -1,71 +1,60 @@
-load("@rules_cc//cc:defs.bzl", "cc_test")
+# Use built-in cc rules
 
-# Main unit tests matching CMake structure
-cc_test(
-    name = "unit_tests",
-    srcs = [
-        "main.cpp",
-        "test_linear_solver.cpp", 
-        "test_nonlinear_solver.cpp",
-        "test_json.cpp",
-        "autodiff.h",
-    ],
-    deps = [
-        "//:polysolve",  # This matches CMake's polysolve::polysolve
-        "@catch2//:catch2",
-    ],
-    data = [
-        "//:linear-solver-spec.json",
-        "//:nonlinear-solver-spec.json",
-    ],
-    size = "medium",
-    timeout = "moderate",
-)
-
-# Individual test targets for better granularity
+# Individual test targets for better granularity - separated to avoid main() conflicts
 cc_test(
     name = "linear_solver_test",
     srcs = [
-        "main.cpp",
         "test_linear_solver.cpp",
         "autodiff.h",
     ],
     deps = [
         "//:polysolve_linear",
-        "@catch2//:catch2",
+        "@catch2//:catch2_main",
     ],
     data = [
         "//:linear-solver-spec.json",
+        "@polyfem_data//:test_data",
     ],
-    size = "small",
+    defines = [
+        "POLYFEM_DATA_DIR=\\\"polyfem_data\\\"",
+    ],
+    copts = [
+        "-std=c++17",
+    ],
+    size = "medium",
 )
 
 cc_test(
     name = "nonlinear_solver_test", 
     srcs = [
-        "main.cpp",
         "test_nonlinear_solver.cpp",
         "autodiff.h",
     ],
     deps = [
         "//:polysolve",
-        "@catch2//:catch2", 
+        "@catch2//:catch2_main", 
     ],
     data = [
         "//:nonlinear-solver-spec.json",
+        "@polyfem_data//:test_data",
     ],
-    size = "small",
+    defines = [
+        "POLYFEM_DATA_DIR=\\\"polyfem_data\\\"",
+    ],
+    copts = [
+        "-std=c++17",
+    ],
+    size = "medium",
 )
 
 cc_test(
     name = "json_test",
     srcs = [
-        "main.cpp",
         "test_json.cpp",
     ],
     deps = [
         "//:polysolve_linear",
-        "@catch2//:catch2",
+        "@catch2//:catch2_main",
     ],
     size = "small",
 )
@@ -78,7 +67,7 @@ cc_test(
     ],
     deps = [
         "//:polysolve",
-        "@catch2//:catch2",
+        "@catch2//:catch2_main",
     ],
     size = "small",
 )

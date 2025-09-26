@@ -4,7 +4,7 @@ cc_library(
         "Eigen/**",
         "eigen3/**",
         "unsupported/**",
-    ]),
+    ], allow_empty = True),
     defines = [
         "EIGEN_MPL2_ONLY",
     ],

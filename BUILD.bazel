@@ -1,5 +1,4 @@
-load("@rules_cc//cc:defs.bzl", "cc_library")
-
+# Use built-in cc rules
 # Export data files for tests
 exports_files([
     "linear-solver-spec.json",

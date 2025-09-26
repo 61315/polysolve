@@ -5,8 +5,7 @@ cc_library(
     ],
     hdrs = glob([
         "src/**/*.h",
-        "src/**/*.hpp",
-    ]),
+    ], allow_empty = True),
     includes = ["src"],
     deps = [
         "@nlohmann_json//:nlohmann_json",
