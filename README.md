@@ -1,6 +1,7 @@
 # PolySolve
 
 ![Build](https://github.com/polyfem/polysolve/workflows/Build/badge.svg)
+![Bazel Build](https://github.com/polyfem/polysolve/workflows/Bazel%20Build/badge.svg)
 [![codecov](https://codecov.io/github/polyfem/polysolve/graph/badge.svg?token=9CTTZX9A2D)](https://codecov.io/github/polyfem/polysolve)
 
 This library contains a cross-platform Eigen wrapper for many different external linear solvers including (but not limited to):
@@ -10,6 +11,33 @@ This library contains a cross-platform Eigen wrapper for many different external
  - AMGCL
  - Pardiso
 
+## Building
+
+PolySolve supports both CMake and Bazel build systems.
+
+### CMake Build (Traditional)
+
+```bash
+mkdir build && cd build
+cmake .. -DPOLYSOLVE_WITH_TESTS=ON
+cmake --build . --parallel
+ctest
+```
+
+### Bazel Build (Recommended)
+
+```bash
+# Build the library
+bazel build //:polysolve
+
+# Run tests
+bazel test //tests:unit_tests
+
+# Build with optimizations
+bazel build --config=opt //:polysolve
+```
+
+For detailed Bazel build instructions, see [BAZEL_BUILD.md](BAZEL_BUILD.md).
 
 ## Example Usage
 
