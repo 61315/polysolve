@@ -78,7 +78,7 @@ git_repository(
 git_repository(
     name = "spectra",
     build_file = "//:third_party/spectra.BUILD",
-    commit = "v1.0.1",
+    commit = "bdd707b9a872bb17622696ed3cca2a27b743a5b7",
     remote = "https://github.com/yixuan/spectra.git",
 )
 
@@ -124,12 +124,12 @@ git_repository(
 )
 
 # Intel TBB (Threading Building Blocks)
-http_archive(
-    name = "onetbb",
-    build_file = "//:third_party/onetbb.BUILD",
-    sha256 = "e5b57537c741400cf6134b428fc1689a649d7d38d9bb9c1b6d64f092ea28178a",
-    strip_prefix = "oneTBB-2021.9.0",
-    urls = [
-        "https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2021.9.0.tar.gz",
-    ],
-)
+# http_archive(
+#     name = "onetbb",
+#     build_file = "//:third_party/onetbb.BUILD",
+#     sha256 = "e5b57537c741400cf6134b428fc1689a649d7d38d9bb9c1b6d64f092ea28178a",
+#     strip_prefix = "oneTBB-2021.9.0",
+#     urls = [
+#         "https://github.com/oneapi-src/oneTBB/archive/refs/tags/v2021.9.0.tar.gz",
+#     ],
+# )

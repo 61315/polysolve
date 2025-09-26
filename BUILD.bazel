@@ -1,3 +1,5 @@
+load("@hedron_compile_commands//:refresh_compile_commands.bzl", "refresh_compile_commands")
+
 # Use built-in cc rules
 # Export data files for tests
 exports_files([
@@ -133,4 +135,16 @@ cc_library(
         ":polysolve_with_spectra",
     ],
     visibility = ["//visibility:public"],
+)
+
+#####
+refresh_compile_commands(
+    name = "refresh",
+    targets = {
+        "//:polysolve": "",
+        "//tests:linear_solver_test": "",
+        # "//survivors:game": "",
+        # "//survivors:main1": "",
+        # "//ecs2:all": "",
+    },
 )
