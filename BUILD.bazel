@@ -1,34 +1,19 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
-# PolySolve Linear library
+# Minimal test build with just utility classes
 cc_library(
-    name = "polysolve_linear",
-    srcs = glob([
-        "src/polysolve/*.cpp",
-        "src/polysolve/linear/*.cpp",
-    ], exclude = [
-        "src/polysolve/linear/CuSolverDN.cu",  # CUDA files handled separately
-    ]),
+    name = "polysolve_utils",
+    srcs = [
+        "src/polysolve/Utils.cpp",
+    ],
     hdrs = glob([
         "src/polysolve/*.hpp",
-        "src/polysolve/linear/*.hpp",
-        "src/polysolve/linear/*.tpp",
-    ], exclude = [
-        "src/polysolve/linear/CuSolverDN.cuh",  # CUDA files handled separately
     ]),
     includes = ["src"],
     deps = [
         "@eigen//:eigen",
         "@nlohmann_json//:nlohmann_json",
         "@spdlog//:spdlog",
-        "@jse//:jse",
-    ],
-    defines = [
-        'POLYSOLVE_LINEAR_SPEC="\\"$(location linear-solver-spec.json)\\""',
-        'POLYSOLVE_JSON_SPEC_DIR="\\".\\\""',
-    ],
-    data = [
-        "linear-solver-spec.json",
     ],
     visibility = ["//visibility:public"],
 )

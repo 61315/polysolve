@@ -26,7 +26,7 @@ http_archive(
 http_archive(
     name = "nlohmann_json",
     build_file = "//:third_party/nlohmann_json.BUILD",
-    sha256 = "b94997df68856753b72f0d7a3703b7d484d4745c567f3584ef97c96c25a5798e",
+    sha256 = "d69f9deb6a75e2580465c6c4c5111b89c4dc2fa94e3a85fcd2ffcd9a143d9273",
     strip_prefix = "json-3.11.2",
     urls = [
         "https://github.com/nlohmann/json/archive/refs/tags/v3.11.2.tar.gz",
@@ -48,7 +48,7 @@ http_archive(
 http_archive(
     name = "fmt",
     build_file = "//:third_party/fmt.BUILD",
-    sha256 = "78b8c0a72b1c35e4443a7e308df52498252d1cefc2b08c9a97bc9ee6cfe61f8b",
+    sha256 = "5dea48d1fcddc3ec571ce2058e13910a0d4a6bab4cc09a809d8b1dd1c88ae6f2",
     strip_prefix = "fmt-9.1.0",
     urls = [
         "https://github.com/fmtlib/fmt/archive/refs/tags/9.1.0.tar.gz",
@@ -59,7 +59,7 @@ http_archive(
 http_archive(
     name = "catch2",
     build_file = "//:third_party/catch2.BUILD",
-    sha256 = "4e8db9bead3cd3c29b4d8dd5ded18a2c13a6d3d50b2374146a5c8b4e2bdc51c7",
+    sha256 = "06dbc7620e3b96c2b69d57bf337028bf245a211b3cddb843835bfe258f427a52",
     strip_prefix = "Catch2-2.13.9",
     urls = [
         "https://github.com/catchorg/Catch2/archive/refs/tags/v2.13.9.tar.gz",
