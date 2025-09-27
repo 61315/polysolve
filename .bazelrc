@@ -38,6 +38,11 @@ build:ubsan --linkopt=-fsanitize=undefined
 test --test_output=errors
 test --test_timeout=300,1200,3600,-1
 
+# CI configuration
+build:ci --verbose_failures
+build:ci --show_timestamps
+build:ci --announce_rc
+
 # Coverage
 coverage --combined_report=lcov
 coverage --coverage_report_generator=@bazel_tools//tools/test:coverage_report_generator
