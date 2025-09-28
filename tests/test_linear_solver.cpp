@@ -10,7 +10,8 @@
 
 #include <spdlog/sinks/stdout_color_sinks.h>
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
+
 #include <iostream>
 #include <unsupported/Eigen/SparseExtra>
 #include <fstream>

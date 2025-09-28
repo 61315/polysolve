@@ -1,15 +1,18 @@
 # Use built-in cc rules
 
+load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
+load("@rules_cc//cc:cc_test.bzl", "cc_test")
+
 # Individual test targets for better granularity - separated to avoid main() conflicts
 cc_test(
     name = "linear_solver_test",
+    size = "medium",
     srcs = [
-        "test_linear_solver.cpp",
         "autodiff.h",
+        "test_linear_solver.cpp",
     ],
-    deps = [
-        "//:polysolve_linear",
-        "@catch2//:catch2_main",
+    copts = [
+        # "-std=c++17",
     ],
     data = [
         "//:linear-solver-spec.json",
@@ -18,21 +21,22 @@ cc_test(
     defines = [
         "POLYFEM_DATA_DIR=\\\"../polyfem_data\\\"",
     ],
-    copts = [
-        "-std=c++17",
+    deps = [
+        "//:polysolve_linear",
+        "@catch2//:catch2_main",
+        # "//:polysolve_with_amgcl",
     ],
-    size = "medium",
 )
 
 cc_test(
-    name = "nonlinear_solver_test", 
+    name = "nonlinear_solver_test",
+    size = "medium",
     srcs = [
-        "test_nonlinear_solver.cpp",
         "autodiff.h",
+        "test_nonlinear_solver.cpp",
     ],
-    deps = [
-        "//:polysolve",
-        "@catch2//:catch2_main", 
+    copts = [
+        # "-std=c++17",
     ],
     data = [
         "//:nonlinear-solver-spec.json",
@@ -41,14 +45,15 @@ cc_test(
     defines = [
         "POLYFEM_DATA_DIR=\\\"../polyfem_data\\\"",
     ],
-    copts = [
-        "-std=c++17",
+    deps = [
+        "//:polysolve",
+        "@catch2//:catch2_main",
     ],
-    size = "medium",
 )
 
 cc_test(
     name = "json_test",
+    size = "small",
     srcs = [
         "test_json.cpp",
     ],
@@ -56,12 +61,12 @@ cc_test(
         "//:polysolve_linear",
         "@catch2//:catch2_main",
     ],
-    size = "small",
 )
 
 # Build verification test (simpler dependencies for validation)
 cc_test(
     name = "simple_build_test",
+    size = "small",
     srcs = [
         "simple_build_test.cpp",
     ],
@@ -69,15 +74,14 @@ cc_test(
         "//:polysolve",
         "@catch2//:catch2_main",
     ],
-    size = "small",
 )
 
 # Debug binary to find data path issues
 cc_binary(
     name = "debug_data_path",
     srcs = ["debug_data_path.cpp"],
+    # copts = ["-std=c++17"],
     data = ["@polyfem_data//:test_data"],
     defines = ["POLYFEM_DATA_DIR=\\\"../polyfem_data\\\""],
     deps = ["//:polysolve_linear"],
-    copts = ["-std=c++17"],
 )

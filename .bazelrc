@@ -1,9 +1,20 @@
 # Bazel configuration for PolySolve
 common --enable_workspace
 
-# C++ standards
-build --cxxopt=-std=c++17
-build --host_cxxopt=-std=c++17
+# Using C++ 17 on all platforms.
+build:linux --host_cxxopt="-std=c++17"
+build:macos --host_cxxopt="-std=c++17"
+build:clang-cl --host_cxxopt="-std=c++17"
+build:msvc-cl --host_cxxopt="/std:c++17"
+build:windows --host_cxxopt="/std:c++17"
+build:linux --cxxopt="-std=c++17"
+build:macos --cxxopt="-std=c++17"
+build:clang-cl --cxxopt="-std=c++17"
+build:msvc-cl --cxxopt="/std:c++17"
+build:windows --cxxopt="/std:c++17"
+build:windows --cxxopt="/utf-8"
+build:windows --color=yes
+build:windows --enable_runfiles
 
 # Build configurations
 build:opt --compilation_mode=opt
@@ -42,6 +53,12 @@ test --test_timeout=300,1200,3600,-1
 build:ci --verbose_failures
 build:ci --show_timestamps
 build:ci --announce_rc
+build:ci --color=yes
+build:ci --curses=no
+build:ci --keep_going
+build:ci --progress_report_interval=100
+build:ci --show_progress_rate_limit=15
+build:ci --ui_actions_shown=1024
 
 # Coverage
 coverage --combined_report=lcov

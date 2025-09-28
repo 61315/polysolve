@@ -26,37 +26,37 @@ http_archive(
 )
 
 # spdlog logging library
-http_archive(
-    name = "spdlog",
-    build_file = "//:third_party/spdlog.BUILD",
-    sha256 = "ca5cae8d6cac15dae0ec63b21d6ad3530070650f68076f3a4a862ca293a858bb",
-    strip_prefix = "spdlog-1.11.0",
-    urls = [
-        "https://github.com/gabime/spdlog/archive/refs/tags/v1.11.0.tar.gz",
-    ],
-)
+# http_archive(
+#     name = "spdlog",
+#     build_file = "//:third_party/spdlog.BUILD",
+#     sha256 = "ca5cae8d6cac15dae0ec63b21d6ad3530070650f68076f3a4a862ca293a858bb",
+#     strip_prefix = "spdlog-1.11.0",
+#     urls = [
+#         "https://github.com/gabime/spdlog/archive/refs/tags/v1.11.0.tar.gz",
+#     ],
+# )
 
 # fmt library (dependency of spdlog)
-http_archive(
-    name = "fmt",
-    build_file = "//:third_party/fmt.BUILD",
-    sha256 = "5dea48d1fcddc3ec571ce2058e13910a0d4a6bab4cc09a809d8b1dd1c88ae6f2",
-    strip_prefix = "fmt-9.1.0",
-    urls = [
-        "https://github.com/fmtlib/fmt/archive/refs/tags/9.1.0.tar.gz",
-    ],
-)
+# http_archive(
+#     name = "fmt",
+#     build_file = "//:third_party/fmt.BUILD",
+#     sha256 = "5dea48d1fcddc3ec571ce2058e13910a0d4a6bab4cc09a809d8b1dd1c88ae6f2",
+#     strip_prefix = "fmt-9.1.0",
+#     urls = [
+#         "https://github.com/fmtlib/fmt/archive/refs/tags/9.1.0.tar.gz",
+#     ],
+# )
 
 # Catch2 testing framework
-http_archive(
-    name = "catch2",
-    build_file = "//:third_party/catch2.BUILD",
-    sha256 = "06dbc7620e3b96c2b69d57bf337028bf245a211b3cddb843835bfe258f427a52",
-    strip_prefix = "Catch2-2.13.9",
-    urls = [
-        "https://github.com/catchorg/Catch2/archive/refs/tags/v2.13.9.tar.gz",
-    ],
-)
+# http_archive(
+#     name = "catch2",
+#     build_file = "//:third_party/catch2.BUILD",
+#     sha256 = "06dbc7620e3b96c2b69d57bf337028bf245a211b3cddb843835bfe258f427a52",
+#     strip_prefix = "Catch2-2.13.9",
+#     urls = [
+#         "https://github.com/catchorg/Catch2/archive/refs/tags/v2.13.9.tar.gz",
+#     ],
+# )
 
 # finite-diff library
 git_repository(
@@ -100,20 +100,20 @@ filegroup(
 git_repository(
     name = "amgcl",
     build_file = "//:third_party/amgcl.BUILD",
-    commit = "1.4.3",
+    tag = "1.4.3",
     remote = "https://github.com/ddemidov/amgcl.git",
 )
 
 # Boost libraries (minimal set for the project)
-http_archive(
-    name = "boost",
-    build_file = "//:third_party/boost.BUILD",
-    sha256 = "6478edfe2f3305127cffe8caf73ea0176c53769f4bf1585be237eb30798c3b8e",
-    strip_prefix = "boost_1_83_0",
-    urls = [
-        "https://archives.boost.io/release/1.83.0/source/boost_1_83_0.tar.bz2",
-    ],
-)
+# http_archive(
+#     name = "boost",
+#     build_file = "//:third_party/boost.BUILD",
+#     sha256 = "6478edfe2f3305127cffe8caf73ea0176c53769f4bf1585be237eb30798c3b8e",
+#     strip_prefix = "boost_1_83_0",
+#     urls = [
+#         "https://archives.boost.io/release/1.83.0/source/boost_1_83_0.tar.bz2",
+#     ],
+# )
 
 # JSON Specification Engine library
 git_repository(

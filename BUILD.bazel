@@ -1,4 +1,5 @@
 load("@hedron_compile_commands//:refresh_compile_commands.bzl", "refresh_compile_commands")
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
 
 # Use built-in cc rules
 # Export data files for tests
@@ -10,85 +11,94 @@ exports_files([
 # PolySolve Linear library (comprehensive - excluding JSE and system-dependent files)
 cc_library(
     name = "polysolve_linear",
-    srcs = glob([
-        "src/polysolve/*.cpp",
-        "src/polysolve/linear/*.cpp",
-    ], exclude = [
-        "src/polysolve/linear/CuSolverDN.cu",    # CUDA files handled separately
-        # JSE-dependent files now included with correct repository
-        "src/polysolve/linear/HypreSolver.cpp",  # Requires HYPRE system library
-        "src/polysolve/linear/Mumps.cpp",        # Requires MUMPS and MPI system libraries
-        "src/polysolve/linear/Pardiso.cpp",      # Requires PARDISO system library
-    ]),
-    hdrs = glob([
-        "src/polysolve/*.hpp",
-        "src/polysolve/linear/*.hpp",
-        "src/polysolve/linear/*.tpp",
-    ], exclude = [
-        "src/polysolve/linear/CuSolverDN.cuh",   # CUDA files handled separately
-    ]),
-    includes = ["src"],
-    copts = ["-std=c++17"],  # Force C++17
-    deps = [
-        "@eigen//:eigen",
-        "@nlohmann_json//:nlohmann_json",
-        "@spdlog//:spdlog",
-        "@finite_diff//:finite_diff",
-        "@jse//:jse",  # Now using the correct public repository
+    srcs = glob(
+        [
+            "src/polysolve/*.cpp",
+            "src/polysolve/linear/*.cpp",
+        ],
+        exclude = [
+            "src/polysolve/linear/CuSolverDN.cu",  # CUDA files handled separately
+            # JSE-dependent files now included with correct repository
+            "src/polysolve/linear/HypreSolver.cpp",  # Requires HYPRE system library
+            "src/polysolve/linear/Mumps.cpp",  # Requires MUMPS and MPI system libraries
+            "src/polysolve/linear/Pardiso.cpp",  # Requires PARDISO system library
+        ],
+    ),
+    hdrs = glob(
+        [
+            "src/polysolve/*.hpp",
+            "src/polysolve/linear/*.hpp",
+            "src/polysolve/linear/*.tpp",
+        ],
+        exclude = [
+            "src/polysolve/linear/CuSolverDN.cuh",  # CUDA files handled separately
+        ],
+    ),
+    data = [
+        "linear-solver-spec.json",
     ],
     defines = [
         'POLYSOLVE_LINEAR_SPEC="\\"$(location linear-solver-spec.json)\\""',
         'POLYSOLVE_JSON_SPEC_DIR="\\".\\\""',
     ],
-    data = [
-        "linear-solver-spec.json",
-    ],
+    includes = ["src"],
     visibility = ["//visibility:public"],
+    # copts = ["-std=c++17"],  # Force C++17
+    deps = [
+        "@eigen",
+        "@finite_diff",
+        "@jse",  # Now using the correct public repository
+        "@nlohmann_json",
+        "@spdlog",
+    ],
 )
 
-# PolySolve Nonlinear library (comprehensive - excluding only JSE-dependent files) 
+# PolySolve Nonlinear library (comprehensive - excluding only JSE-dependent files)
 cc_library(
     name = "polysolve_nonlinear",
-    srcs = glob([
-        "src/polysolve/nonlinear/*.cpp",
-        "src/polysolve/nonlinear/descent_strategies/*.cpp",
-        "src/polysolve/nonlinear/descent_strategies/box_constraints/*.cpp",
-        "src/polysolve/nonlinear/line_search/*.cpp",
-    ], exclude = [
-        # JSE-dependent files now included with correct repository
-        # Only system-dependent files excluded
-    ]),
+    srcs = glob(
+        [
+            "src/polysolve/nonlinear/*.cpp",
+            "src/polysolve/nonlinear/descent_strategies/*.cpp",
+            "src/polysolve/nonlinear/descent_strategies/box_constraints/*.cpp",
+            "src/polysolve/nonlinear/line_search/*.cpp",
+        ],
+        exclude = [
+            # JSE-dependent files now included with correct repository
+            # Only system-dependent files excluded
+        ],
+    ),
     hdrs = glob([
         "src/polysolve/nonlinear/*.hpp",
         "src/polysolve/nonlinear/descent_strategies/*.hpp",
         "src/polysolve/nonlinear/descent_strategies/box_constraints/*.hpp",
         "src/polysolve/nonlinear/line_search/*.hpp",
     ]),
-    includes = ["src"],
-    copts = ["-std=c++17"],  # Force C++17
-    deps = [
-        ":polysolve_linear",
-        "@lbfgspp//:lbfgspp",
-        "@finite_diff//:finite_diff",
-        "@jse//:jse",  # Also needed for nonlinear solver
+    data = [
+        "nonlinear-solver-spec.json",
     ],
     defines = [
         'POLYSOLVE_NON_LINEAR_SPEC="\\"$(location nonlinear-solver-spec.json)\\""',
     ],
-    data = [
-        "nonlinear-solver-spec.json",
-    ],
+    includes = ["src"],
     visibility = ["//visibility:public"],
+    # copts = ["-std=c++17"],  # Force C++17
+    deps = [
+        ":polysolve_linear",
+        "@finite_diff",
+        "@jse",  # Also needed for nonlinear solver
+        "@lbfgspp",
+    ],
 )
 
 # Combined PolySolve library (matches CMake polysolve::polysolve target)
 cc_library(
     name = "polysolve",
+    visibility = ["//visibility:public"],
     deps = [
         ":polysolve_linear",
         ":polysolve_nonlinear",
     ],
-    visibility = ["//visibility:public"],
 )
 
 # Optional dependencies (configurable through defines)
@@ -96,45 +106,45 @@ cc_library(
 # AMGCL support
 cc_library(
     name = "polysolve_with_amgcl",
-    deps = [
-        ":polysolve",
-        "@amgcl//:amgcl",
-    ],
     defines = ["POLYSOLVE_WITH_AMGCL"],
     visibility = ["//visibility:public"],
+    deps = [
+        ":polysolve",
+        "@amgcl",
+    ],
 )
 
 # Spectra support
 cc_library(
     name = "polysolve_with_spectra",
-    deps = [
-        ":polysolve",
-        "@spectra//:spectra",
-    ],
     defines = ["POLYSOLVE_WITH_SPECTRA"],
     visibility = ["//visibility:public"],
+    deps = [
+        ":polysolve",
+        "@spectra",
+    ],
 )
 
 # TBB support
 cc_library(
     name = "polysolve_with_tbb",
-    deps = [
-        ":polysolve",
-        "@onetbb//:onetbb",
-    ],
     defines = ["POLYSOLVE_WITH_TBB"],
     visibility = ["//visibility:public"],
+    deps = [
+        ":polysolve",
+        "@onetbb",
+    ],
 )
 
 # Combined library with all optional features
 cc_library(
     name = "polysolve_full",
+    visibility = ["//visibility:public"],
     deps = [
         ":polysolve",
         ":polysolve_with_amgcl",
         ":polysolve_with_spectra",
     ],
-    visibility = ["//visibility:public"],
 )
 
 #####
