@@ -7,3 +7,8 @@ tests/data
 *.code-workspace
 PolySolveOptions.cmake
 .vs
+
+# Bazel artifacts
+bazel-*
+.bazelrc.local
+bazelisk

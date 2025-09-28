@@ -1,0 +1,112 @@
+# Use built-in cc rules
+
+load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
+load("@rules_cc//cc:cc_test.bzl", "cc_test")
+
+# Individual test targets for better granularity - separated to avoid main() conflicts
+cc_test(
+    name = "linear_solver_test",
+    size = "medium",
+    srcs = [
+        "autodiff.h",
+        "test_linear_solver.cpp",
+    ],
+    copts = [
+        # "-std=c++17",
+    ],
+    data = [
+        "//:linear-solver-spec.json",
+        "@polyfem_data//:test_data",
+    ],
+    defines = [
+        "POLYFEM_DATA_DIR=\\\"../polyfem_data\\\"",
+    ],
+    deps = [
+        "//:polysolve_linear",
+        "@catch2//:catch2_main",
+        # "//:polysolve_with_amgcl",
+    ],
+)
+
+cc_test(
+    name = "nonlinear_solver_test",
+    size = "medium",
+    srcs = [
+        "autodiff.h",
+        "test_nonlinear_solver.cpp",
+    ],
+    copts = [
+        # "-std=c++17",
+    ],
+    data = [
+        "//:nonlinear-solver-spec.json",
+        "@polyfem_data//:test_data",
+    ],
+    defines = [
+        "POLYFEM_DATA_DIR=\\\"../polyfem_data\\\"",
+    ],
+    deps = [
+        "//:polysolve",
+        "@catch2//:catch2_main",
+    ],
+)
+
+cc_test(
+    name = "json_test",
+    size = "small",
+    srcs = [
+        "test_json.cpp",
+    ],
+    deps = [
+        "//:polysolve_linear",
+        "@catch2//:catch2_main",
+    ],
+)
+
+# Build verification test (simpler dependencies for validation)
+cc_test(
+    name = "simple_build_test",
+    size = "small",
+    srcs = [
+        "simple_build_test.cpp",
+    ],
+    deps = [
+        "//:polysolve",
+        "@catch2//:catch2_main",
+    ],
+)
+
+# Debug binary to find data path issues
+cc_binary(
+    name = "debug_data_path",
+    srcs = ["debug_data_path.cpp"],
+    # copts = ["-std=c++17"],
+    data = ["@polyfem_data//:test_data"],
+    defines = ["POLYFEM_DATA_DIR=\\\"../polyfem_data\\\""],
+    deps = ["//:polysolve_linear"],
+)
+
+cc_test(
+    name = "unit_tests",
+    size = "large",
+    srcs = [
+        "autodiff.h",
+        # "main.cpp",
+        "test_json.cpp",
+        "test_linear_solver.cpp",
+        "test_nonlinear_solver.cpp",
+    ],
+    data = [
+        "//:linear-solver-spec.json",
+        "//:nonlinear-solver-spec.json",
+        "@polyfem_data//:test_data",
+    ],
+    defines = [
+        "POLYFEM_DATA_DIR=\\\"../polyfem_data\\\"",
+    ],
+    deps = [
+        "//:polysolve",
+        "//:polysolve_linear",
+        "@catch2//:catch2_main",
+    ],
+)
